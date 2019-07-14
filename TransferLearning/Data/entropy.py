@@ -1,12 +1,10 @@
 import os
-import cv2
 import argparse
 import numpy
-import skimage
 from skimage import io, color, img_as_ubyte
-from operator import itemgetter
 from PIL import Image
 import random
+from src.VGG16.image import helpers
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dir", required=True, help="directory of images to process")
@@ -21,18 +19,7 @@ sample_type = args["type"]
 dir_path = args["dir"]
 output_dir = args["output"]
 
-image_entropies = []
-for filename in os.listdir(dir_path):
-    if filename.endswith('.jpg'):
-        path = dir_path + filename
-        rgbImg = io.imread(path)
-        grayImg = img_as_ubyte(color.rgb2gray(rgbImg))
-        ent = skimage.measure.shannon_entropy(grayImg)
-        dictionary= {"filename" : filename,
-                     "entropy-value" : ent}
-        image_entropies.append(dictionary)
-
-image_entropies.sort(key = itemgetter('entropy-value'), reverse=True)
+image_entropies = helpers.get_image_entropies(dir_path)
 
 # if not os.path.exists(output_dir):
 #     os.mkdir(output_dir)
@@ -64,23 +51,14 @@ for dictionary in image_entropies[:32]:
     grayImg = img_as_ubyte(color.rgb2gray(rgbImg))
 
     croppedImg = Image.fromarray(grayImg)
+    # FIXME : Crop less at the bottom, more at the top
+    # TODO : Resize to the same as the ALZ data
     # The crop rectangle, as a (left, upper, right, lower)-tuple.
-    cropped = croppedImg.crop((5, 40, 170, 225))
-
-    baseheight = 255
-    hpercent = (baseheight / float(cropped.size[1]))
-    wsize = int((float(cropped.size[0]) * float(hpercent)))
-    resized_img = cropped.resize((wsize, baseheight), Image.ANTIALIAS)
-
-    resized_img = numpy.array(resized_img)
-    count = save_image(count, resized_img)
+    cropped = croppedImg.crop((25,20,250,275))
+    cropped = numpy.array(cropped)
+    count = save_image(count, cropped)
 
     # rows, cols = cropped.shape
 
     # count = rotate(rotation_l, count)
     # count = rotate(rotation_r, count)
-
-# 2272 Train Bipolar
-# 1024 Train Control - 1248 NAL
-# 640 Val Bipolar
-# 320 Val Control - 320 NAL

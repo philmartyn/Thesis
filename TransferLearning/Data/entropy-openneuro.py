@@ -1,5 +1,4 @@
 import os
-import cv2
 import argparse
 import numpy
 import skimage
@@ -41,7 +40,7 @@ _, _, files = next(os.walk(output_dir))
 file_count = len(files) + 1
 
 count = 0
-rnd_count = random.sample(range(file_count, file_count + 150), 150)
+rnd_count = random.sample(range(file_count, file_count + 32), 32)
 
 
 def save_image(file_counter, img):
@@ -52,23 +51,24 @@ def save_image(file_counter, img):
     return file_counter
 
 
-def rotate(rotation, file_counter):
-    m = cv2.getRotationMatrix2D((cols / 2, rows / 2), rotation, 1)
-    dst = cv2.warpAffine(cropped, m, (cols, rows))
-    return save_image(file_counter, dst)
-
-
-for dictionary in image_entropies[:50]:
+for dictionary in image_entropies[:32]:
     filename = dictionary["filename"]
     rgbImg = io.imread(dir_path + filename)
     grayImg = img_as_ubyte(color.rgb2gray(rgbImg))
 
     croppedImg = Image.fromarray(grayImg)
-    cropped = croppedImg.crop((40,30,240,265))
-    cropped = numpy.array(cropped)
-    count = save_image(count, cropped)
+    # The crop rectangle, as a (left, upper, right, lower)-tuple.
+    cropped = croppedImg.crop((5, 40, 170, 225))
 
-    rows, cols = cropped.shape
+    baseheight = 255
+    hpercent = (baseheight / float(cropped.size[1]))
+    wsize = int((float(cropped.size[0]) * float(hpercent)))
+    resized_img = cropped.resize((wsize, baseheight), Image.ANTIALIAS)
 
-    count = rotate(rotation_l, count)
-    count = rotate(rotation_r, count)
+    resized_img = numpy.array(resized_img)
+    count = save_image(count, resized_img)
+
+# 2272 Train Bipolar
+# 1024 Train Control - 1248 NAL
+# 640 Val Bipolar
+# 320 Val Control - 320 NAL
