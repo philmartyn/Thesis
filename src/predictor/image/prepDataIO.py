@@ -2,7 +2,7 @@ from med2image import med2image
 from deepbrain import Extractor
 import nibabel as nib
 import os
-from src.Predictor.image.helpers import get_image_entropies, crop_and_save_image
+from src.predictor.image.helpers import get_image_entropies, crop_and_save_image
 
 # Taken from https://github.com/iitzco/deepbrain/blob/master/bin/deepbrain-extractor
 # Changed the code a little because I didn't want the brain mask image saved.

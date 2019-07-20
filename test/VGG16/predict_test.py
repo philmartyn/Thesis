@@ -1,6 +1,6 @@
 import os
-from src.Predictor.predict import predict
-from src.Predictor.image.prepDataIO import prep_data
+from src.predictor.predict import predict
+from src.predictor.image.prepDataIO import prep_data
 
 
 # Test that prep_data stores JPG files in the tmp directory

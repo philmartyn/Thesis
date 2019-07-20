@@ -1,7 +1,7 @@
 import pika
 import json
-from src.Predictor.image.prepDataIO import prep_data
-from src.Predictor.predict import predict
+from src.predictor.image.prepDataIO import prep_data
+from src.predictor.predict import predict
 import os
 
 # Queueing declaration stuff here.
