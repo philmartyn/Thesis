@@ -16,7 +16,8 @@ from skimage import io, color, measure
 
 def prep_data(filename_path):
 
-    nii_output_dir = os.getenv('TMP_DIR_PATH', "/Users/pmartyn/PycharmProjects/Thesis/tmp/")
+    nii_output_dir = os.getenv('TMP_DIR_PATH',
+                               "/Users/pmartyn/PycharmProjects/Thesis/tmp/")
 
     if not os.path.exists(nii_output_dir):
         os.makedirs(nii_output_dir)
