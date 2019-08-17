@@ -4,7 +4,7 @@ import numpy
 from skimage import io, color, img_as_ubyte
 from PIL import Image
 import random
-from src.VGG16.image import helpers
+from src.predictor.image import helpers
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dir", required=True, help="directory of images to process")
@@ -39,26 +39,13 @@ def save_image(file_counter, img):
     return file_counter
 
 
-# def rotate(rotation, file_counter):
-#     m = cv2.getRotationMatrix2D((cols / 2, rows / 2), rotation, 1)
-#     dst = cv2.warpAffine(cropped, m, (cols, rows))
-#     return save_image(file_counter, dst)
-
-
 for dictionary in image_entropies[:32]:
     filename = dictionary["filename"]
     rgbImg = io.imread(dir_path + filename)
     grayImg = img_as_ubyte(color.rgb2gray(rgbImg))
 
     croppedImg = Image.fromarray(grayImg)
-    # FIXME : Crop less at the bottom, more at the top
-    # TODO : Resize to the same as the ALZ data
     # The crop rectangle, as a (left, upper, right, lower)-tuple.
     cropped = croppedImg.crop((25,20,250,275))
     cropped = numpy.array(cropped)
     count = save_image(count, cropped)
-
-    # rows, cols = cropped.shape
-
-    # count = rotate(rotation_l, count)
-    # count = rotate(rotation_r, count)

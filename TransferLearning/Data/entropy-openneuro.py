@@ -13,9 +13,6 @@ ap.add_argument("-o", "--output", required=True, help="output directory for proc
 ap.add_argument("-t", "--type", required=True, help="either control or bipolar")
 args = vars(ap.parse_args())
 
-rotation_l = 15
-rotation_r = 345
-
 sample_type = args["type"]
 dir_path = args["dir"]
 output_dir = args["output"]

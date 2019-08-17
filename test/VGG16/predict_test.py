@@ -13,7 +13,7 @@ def number_of_files():
 
 # assert number_of_files() == 0
 
-prep_data("/Users/pmartyn/PycharmProjects/Thesis/TransferLearning/Data/prediction-data/MRI/Bipolar/CHRM2053_MPRAGE_T13D.nii")
+prep_data("/Users/pmartyn/PycharmProjects/Thesis/TransferLearning/Data/prediction-data/test/sub-60001_anat_sub-60001_T1w.nii")
 #
 # print("Number of files ", number_of_files())
 

@@ -8,15 +8,9 @@ from src.predictor.image.helpers import get_image_entropies, crop_and_save_image
 # Changed the code a little because I didn't want the brain mask image saved.
 
 
-def prep_data(filename_path):
+def prep_data(filename_path, nii_dir_path):
 
-    # Get the path to the where the image files need to go
-    nii_output_dir = os.getenv('TMP_DIR_PATH',
-                               "/Users/pmartyn/PycharmProjects/Thesis/tmp/")
-
-    if not os.path.exists(nii_output_dir):
-        os.makedirs(nii_output_dir)
-
+    print("Extracting brain from NII file.")
     # Brain extraction stuff happens here.
     p = 0.5
     img = nib.load(filename_path)
@@ -32,21 +26,23 @@ def prep_data(filename_path):
     brain = img[:]
     brain[~mask] = 0
     brain = nib.Nifti1Image(brain, affine)
-    nib.save(brain, os.path.join(nii_output_dir, "brain.nii"))
+    nib.save(brain, os.path.join(nii_dir_path, "brain.nii"))
 
     # Split the extracted brain NII into individual JPGs.
-    jpg_dir_path = nii_output_dir + '/jpg/'
+    jpg_dir_path = nii_dir_path + '/jpg/'
 
+    # Create the necessary output directories
     if not os.path.exists(jpg_dir_path):
         os.makedirs(jpg_dir_path)
 
+    # Split the NII into JPGs
     med2image.med2image_nii(
-        inputFile=nii_output_dir + "/brain.nii",
+        inputFile=nii_dir_path + "/brain.nii",
         outputDir=jpg_dir_path,
         outputFileStem='NII-file',
         outputFileType="jpg").run()
 
-    processed_img_dir = nii_output_dir + "/proc_img/"
+    processed_img_dir = nii_dir_path + "/proc_img/"
 
     if not os.path.exists(processed_img_dir):
         os.makedirs(processed_img_dir)
