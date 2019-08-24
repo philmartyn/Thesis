@@ -17,12 +17,14 @@ from keras.regularizers import l2
 img_width, img_height = 150, 150
 
 # Paths to model output and data
-top_model_weights_path = '/Users/pmartyn/PycharmProjects/Thesis/Output/bottleneck_weights.h5'
-model_path = '/Users/pmartyn/PycharmProjects/Thesis/Output/bipolar.model'
-train_data_dir = '/Users/pmartyn/PycharmProjects/Thesis/TransferLearning/Data/Crossfolds/Fold1/converted/train'
-validation_data_dir = '/Users/pmartyn/PycharmProjects/Thesis/TransferLearning/Data/Crossfolds/Fold1/converted/validation'
+output_base_path = '/Users/pmartyn/PycharmProjects/Thesis/Output/Fold4/'
+top_model_weights_path = output_base_path + 'bottleneck_weights.h5'
+model_path = output_base_path + 'bipolar.model'
+data_base_path = '/Users/pmartyn/PycharmProjects/Thesis/TransferLearning/Data/Crossfolds/Fold4/'
+train_data_dir = data_base_path + 'converted/train'
+validation_data_dir = data_base_path + 'converted/validation'
 # Hyperparameters inputs relating to data
-nb_train_samples = 4520
+nb_train_samples = 4512
 nb_validation_samples = 1280
 init_lr = 1e-3
 epochs = 50
@@ -52,7 +54,7 @@ def gen_and_save_bottleneck_features():
         generator, nb_train_samples // batch_size)
     print("bottleneck_features_train created. ", bottleneck_features_train)
 
-    np.save('bottleneck_features_train.npy',
+    np.save(output_base_path + 'bottleneck_features_train.npy',
             bottleneck_features_train)
 
     generator = imagegen.flow_from_directory(
@@ -63,13 +65,13 @@ def gen_and_save_bottleneck_features():
         shuffle=False)
     bottleneck_features_validation = model.predict_generator(
         generator, nb_validation_samples // batch_size)
-    np.save('bottleneck_features_validation.npy',
+    np.save(output_base_path + 'bottleneck_features_validation.npy',
             bottleneck_features_validation)
 
 
 # Train the VGG16 fully connected layer using the data.
 def train_top_model():
-    train_data = np.load(open('bottleneck_features_train.npy', 'rb'))
+    train_data = np.load(open(output_base_path + 'bottleneck_features_train.npy', 'rb'))
     train_labels = np.array(
         [0] * int(nb_train_samples / 2) + [1] * int(nb_train_samples / 2))
 
@@ -82,7 +84,7 @@ def train_top_model():
 
     print("Training labels post labeliser. ", training_labels.size)
 
-    validation_data = np.load(open('bottleneck_features_validation.npy', 'rb'))
+    validation_data = np.load(open(output_base_path + 'bottleneck_features_validation.npy', 'rb'))
     validation_labels = np.array(
         [0] * int(nb_validation_samples / 2) + [1] * int(nb_validation_samples / 2))
 
@@ -92,9 +94,9 @@ def train_top_model():
 
     model = Sequential()
     model.add(Flatten(input_shape=train_data.shape[1:]))
-    model.add(Dense(256, activation='relu', kernel_regularizer=l2(0.0005), bias_regularizer=l2(0.0005)))
     model.add(BatchNormalization())
-    # model.add(Dropout(0.5))
+    model.add(Dense(256, activation='relu', kernel_regularizer=l2(0.0005), bias_regularizer=l2(0.0005)))
+    model.add(Dropout(0.5))
     model.add(Dense(1, activation='sigmoid', kernel_regularizer=l2(0.0005), bias_regularizer=l2(0.0005)))
 
     model.compile(optimizer='rmsprop',
@@ -106,8 +108,7 @@ def train_top_model():
                         validation_data=(validation_data, val_labels))
     model.save_weights(top_model_weights_path)
     model.save(model_path)
-
-    with open('/Users/pmartyn/PycharmProjects/Thesis/Output/history', 'wb') as file_pi:
+    with open(output_base_path + 'history.history', 'wb') as file_pi:
         pickle.dump(history.history, file_pi)
 
 
