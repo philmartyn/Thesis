@@ -7,4 +7,4 @@ numpy==1.16.2
 opencv-python
 scikit-image
 pika==1.0.1
-Pillow==6.0.0
+Pillow==8.2.0
