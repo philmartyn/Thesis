@@ -3,7 +3,7 @@ deepbrain==0.1
 Keras==2.2.4
 med2image==1.1.2
 nibabel==2.4.0
-numpy==1.16.2
+numpy==1.21.0
 opencv-python
 scikit-image
 pika==1.0.1
